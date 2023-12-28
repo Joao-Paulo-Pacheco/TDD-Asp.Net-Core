@@ -34,5 +34,10 @@ namespace TesteUnitario.Tests.Users.TestsDoubles.Spies
         public string GetUserName() { return _lastUserName; }
         public string GetPassword() { return _lastPassword; }
         public int GetCount() => _count;
+
+        public Task<bool> Add(User user)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,20 +1,19 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using TesteUnitario.Repository;
 using TesteUnitario.Users;
 
-namespace TesteUnitario.Tests.Users.TestsDoubles.Stubs
+namespace TesteUnitario.Tests.Users.Fakes
 {
-    public class UserRepositoryStub : IUserRepository
+    public class UserRepositoryFake : IUserRepository
     {
         public Task<bool> Add(User user)
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
 
         public async Task<bool> Authenticate(string username, string password)
         {
-            return false;
+            return (username.Equals("user") && password.Equals("12345"));
         }
 
         public async Task<User> GetUserByUserName(string username)

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using TesteUnitario.Repository;
 
 namespace TesteUnitario.Users
@@ -21,6 +18,19 @@ namespace TesteUnitario.Users
             if (existUser == null) return false;
 
             var sucess = await _userRepository.Authenticate(username, password);
+            return sucess;
+        }
+
+        public async Task<bool> Add(User user)
+        {
+            var existUser = await _userRepository.GetUserByUserName(user.UserName);
+            if (existUser != null) return false;
+
+            var newUser = new User();
+            newUser.UserName = user.UserName;
+            newUser.Password = user.Password;
+
+            var sucess = await _userRepository.Add(newUser);
             return sucess;
         }
     }

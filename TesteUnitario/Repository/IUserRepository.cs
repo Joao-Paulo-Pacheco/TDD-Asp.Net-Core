@@ -7,5 +7,6 @@ namespace TesteUnitario.Repository
     {
         Task<bool> Authenticate(string username, string password);
         Task<User> GetUserByUserName(string username);
+        Task<bool> Add(User user);
     }
 }

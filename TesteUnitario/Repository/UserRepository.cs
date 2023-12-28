@@ -23,5 +23,10 @@ namespace TesteUnitario.Repository
         {
             throw new NotImplementedException();
         }
+
+        public Task<bool> Add(User user)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

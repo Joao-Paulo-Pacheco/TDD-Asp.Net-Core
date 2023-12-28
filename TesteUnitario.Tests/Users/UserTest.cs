@@ -1,6 +1,8 @@
 ﻿using Moq;
 using System.Threading.Tasks;
 using TesteUnitario.Repository;
+using TesteUnitario.Tests.Users.Fakes;
+using TesteUnitario.Tests.Users.Fixtures;
 using TesteUnitario.Tests.Users.TestsDoubles.Dummys;
 using TesteUnitario.Tests.Users.TestsDoubles.Moqs;
 using TesteUnitario.Tests.Users.TestsDoubles.Spies;
@@ -147,12 +149,67 @@ namespace TesteUnitario.Tests.Users
             //Configurando função GetUserByUserName e Authenticate do userRepositoryMock
             _userRepositoryMock.Setup(x => x.GetUserByUserName(username)).ReturnsAsync(new User());
             _userRepositoryMock.Setup(x => x.Authenticate(username, password)).ReturnsAsync(true);
-            
+
             // Usando Moq
             var service = new UserService(_userRepositoryMock.Object);
 
             //Act
             var result = await service.Authenticate(username, password);
+
+            //Assert
+            Assert.True(result);
+        }
+        #endregion
+
+        #region FAKE
+        [Fact]
+        public async Task Authenticate_CredentialIsValid_ReturnTrue()
+        {
+            //Arrange
+            var username = "user";
+            var password = "12345";
+            var fake = new UserRepositoryFake();
+            var service = new UserService(fake);
+
+            // Act
+            var result = await service.Authenticate(username, password);
+
+            //Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task Authenticate_CredentialIsNotValid_ReturnFalse()
+        {
+            //Arrange
+            var username = "user";
+            var password = "4123";
+            var fake = new UserRepositoryFake();
+            var service = new UserService(fake);
+
+            // Act
+            var result = await service.Authenticate(username, password);
+
+            //Assert
+            Assert.False(result);
+        }
+        #endregion
+
+        #region FAKER
+        [Fact]
+        public async Task Add_UserValid_ReturnTrue()
+        {
+            //Arrange
+            var username = "user";
+            var password = "12345";
+
+            _userRepositoryMock.Setup(x => x.GetUserByUserName(username)).ReturnsAsync(new User());
+            _userRepositoryMock.Setup(x => x.Add(It.IsAny<User>())).ReturnsAsync(true);
+            var service = new UserService(_userRepositoryMock.Object);
+            var model = UserFixture.GetUserValid();
+
+            //Act
+            var result = await service.Add(model);
 
             //Assert
             Assert.True(result);
