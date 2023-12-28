@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
+using System.Linq;
 using System.Threading.Tasks;
 using TesteUnitario.Users;
 
@@ -14,19 +14,21 @@ namespace TesteUnitario.Repository
             this.dbContext = dbContext;
         }
 
-        public Task<bool> Authenticate(string username, string password)
+        public async Task<bool> Authenticate(string username, string password)
         {
-            throw new NotImplementedException();
+            return dbContext.Set<User>().Where(a => a.UserName == username && a.Password == password).Any();
         }
 
-        public Task<User> GetUserByUserName(string username)
+        public async Task<User> GetUserByUserName(string username)
         {
-            throw new NotImplementedException();
+            return dbContext.Set<User>().Where(a => a.UserName == username).FirstOrDefault();
         }
 
-        public Task<bool> Add(User user)
+        public async Task<bool> Add(User user)
         {
-            throw new NotImplementedException();
+            dbContext.Set<User>().Add(user);
+
+            return true;
         }
     }
 }

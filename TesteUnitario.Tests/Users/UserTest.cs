@@ -1,6 +1,8 @@
 ﻿using Moq;
+using System.Linq;
 using System.Threading.Tasks;
 using TesteUnitario.Repository;
+using TesteUnitario.Tests.Fixtures;
 using TesteUnitario.Tests.Users.Fakes;
 using TesteUnitario.Tests.Users.Fixtures;
 using TesteUnitario.Tests.Users.TestsDoubles.Dummys;
@@ -12,13 +14,15 @@ using Xunit;
 
 namespace TesteUnitario.Tests.Users
 {
-    public class UserTest
+    public class UserTest : IClassFixture<DatabaseFixture>
     {
         private readonly Mock<IUserRepository> _userRepositoryMock;
+        private DatabaseFixture Fixture { get; set; }
 
-        public UserTest()
+        public UserTest(DatabaseFixture fixture)
         {
             _userRepositoryMock = new Mock<IUserRepository>();
+            Fixture = fixture;
         }
 
         #region DUMMY
@@ -213,6 +217,44 @@ namespace TesteUnitario.Tests.Users
 
             //Assert
             Assert.True(result);
+        }
+        #endregion
+
+        #region Teste com Banco
+        [Fact]
+        public async Task AuthenticateBanco_UserExists_ReturnTrue()
+        {
+            //Arrange
+            using var context = Fixture.CreateContext();
+            var service = new UserService(new UserRepository(context));
+            var name = "teste2";
+            var password = "senha2";
+
+            //Act
+            var result = await service.Authenticate(name, password);
+
+            //Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task AddUser()
+        {
+            //Arrange
+            using var context = Fixture.CreateContext();
+            context.Database.BeginTransaction(); //EVITA COMMIT
+            var service = new UserService(new UserRepository(context));
+            var name = "NewUser";
+            var password = "Password";
+
+            //Act
+            var result = await service.Add(new User(name, password));
+
+            // Recupera do entity (pois o insert não foi comitado)
+            var user = context.Users.Local.Single(a => a.UserName == name);
+
+            //Assert
+            Assert.Equal(password, user.Password);
         }
         #endregion
 

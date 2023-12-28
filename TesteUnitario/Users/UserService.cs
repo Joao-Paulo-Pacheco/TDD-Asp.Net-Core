@@ -26,9 +26,11 @@ namespace TesteUnitario.Users
             var existUser = await _userRepository.GetUserByUserName(user.UserName);
             if (existUser != null) return false;
 
-            var newUser = new User();
-            newUser.UserName = user.UserName;
-            newUser.Password = user.Password;
+            var newUser = new User
+            {
+                UserName = user.UserName,
+                Password = user.Password
+            };
 
             var sucess = await _userRepository.Add(newUser);
             return sucess;
